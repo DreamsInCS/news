@@ -25,7 +25,7 @@ class Repository {
 
   Future<ItemModel> fetchItem(int id) async {
     ItemModel item;
-    Source source;
+    var source;     // Left dynamic so that Dart can compare it to cache as needed
 
     for (source in sources) {
       item = await source.fetchItem(id);
@@ -34,12 +34,25 @@ class Repository {
         break;
       }
     }
-
+ 
     for (var cache in caches) {
-      cache.addItem(item);
+      // Don't re-insert the data, it'll cause an error in our database!
+      if (cache != source) {
+        cache.addItem(item);
+      }
     }
 
     return item;
+  }
+
+  // Although we have no explicit return statement, the "await" keyword will
+  // implicitly return a Future
+  // The reason this is necessary is because our RefreshIndicator requires some Future
+  // that, when resolved, can let the RefreshIndicator know when the cache is completely cleared
+  clearCache() async {
+    for (var cache in caches) {
+      await cache.clear();
+    }
   }
 }
 
@@ -49,6 +62,8 @@ abstract class Source {
   Future<ItemModel> fetchItem(int id);
 }
 
+// Is storage for information
 abstract class Cache {
   Future<int> addItem(ItemModel item);
+  Future<int> clear();
 }

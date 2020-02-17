@@ -18,10 +18,10 @@ class NewsDbProvider implements Source, Cache {
     return null;
   }
 
-  void init() async {
+  init() async {
     // Accesses local storage on device
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    final path = join(documentsDirectory.path, "items.db");
+    final path = join(documentsDirectory.path, 'newsItems.db');
 
     db = await openDatabase(
       path,
@@ -33,15 +33,17 @@ class NewsDbProvider implements Source, Cache {
           CREATE TABLE Items
             (
               id INTEGER PRIMARY KEY,
+              deleted INTEGER,
               type TEXT,
               by TEXT,
               time INTEGER,
               text TEXT,
+              dead INTEGER,
               parent INTEGER,
               kids BLOB,
-              dead INTEGER,
-              deleted INTEGER,
               url TEXT,
+              score INTEGER,
+              title TEXT,
               descendants INTEGER
             )
         """);
@@ -53,7 +55,7 @@ class NewsDbProvider implements Source, Cache {
     final maps = await db.query(
       'Items',
       columns: null,
-      where: "id = ?",
+      where: 'id = ?',
       whereArgs: [id]  // Find an id equal to... whatever's in whereArgs
     );
     
@@ -67,7 +69,11 @@ class NewsDbProvider implements Source, Cache {
   // We do not mark this with async/await because we aren't expecting the result
   // of the insertion, we're not going to do anything with it. Just insert and move on!
   Future<int> addItem(ItemModel item) {
-    return db.insert("Items", item.toMapForDb());
+    return db.insert('Items', item.toMap());
+  }
+
+  Future<int> clear() {
+    return db.delete('Items');
   }
 }
 

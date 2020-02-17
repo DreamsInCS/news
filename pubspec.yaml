@@ -26,6 +26,7 @@ dependencies:
   http: any
   sqflite:  '>= 0.10.0'
   path_provider: '>= 0.4.1'
+  rxdart: '>=0.16.7'
 
 dev_dependencies:
   flutter_test:
