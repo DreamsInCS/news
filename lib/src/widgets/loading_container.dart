@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class LoadingListTile extends StatelessWidget {
+class LoadingContainer extends StatelessWidget {
   Widget build(context) {
     return Column(
       children: <Widget>[

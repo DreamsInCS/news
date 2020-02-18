@@ -50,7 +50,8 @@ class NewsDetail extends StatelessWidget {
     final commentsList = item.kids.map((kidId) {
       return Comment(
         itemId: kidId,
-        itemMap: itemMap
+        itemMap: itemMap,
+        depth: 1      // Top-level comments have minimum depth
       );
     }).toList(); 
     children.addAll(commentsList);     // Converts lazy iterable into List
